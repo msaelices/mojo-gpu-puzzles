@@ -3,7 +3,6 @@ from gpu import thread_idx
 from gpu.host import DeviceContext
 from testing import assert_equal
 
-# ANCHOR: add_10_guard
 alias SIZE = 4
 alias BLOCKS_PER_GRID = 1
 alias THREADS_PER_BLOCK = (8, 1)
@@ -16,13 +15,10 @@ fn add_10_guard(
     size: Int,
 ):
     i = thread_idx.x
-    # FILL ME IN (roughly 2 lines)
+    if i < size:
+        out[i] = a[i] + 10
 
-
-# ANCHOR_END: add_10_guard
-
-
-def main():
+fn main() raises:
     with DeviceContext() as ctx:
         out = ctx.enqueue_create_buffer[dtype](SIZE).enqueue_fill(0)
         a = ctx.enqueue_create_buffer[dtype](SIZE).enqueue_fill(0)
