@@ -17,13 +17,15 @@ fn add_10_2d(
 ):
     row = thread_idx.y
     col = thread_idx.x
-    # FILL ME IN (roughly 2 lines)
+    if row < size and col < size:
+        idx = row * size + col
+        out[idx] = a[idx] + 10
 
 
 # ANCHOR_END: add_10_2d
 
 
-def main():
+fn main() raises:
     with DeviceContext() as ctx:
         out = ctx.enqueue_create_buffer[dtype](SIZE * SIZE).enqueue_fill(0)
         expected = ctx.enqueue_create_host_buffer[dtype](
