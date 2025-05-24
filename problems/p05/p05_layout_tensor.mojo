@@ -25,11 +25,11 @@ fn broadcast_add[
 ):
     row = thread_idx.y
     col = thread_idx.x
-    # FILL ME IN (roughly 2 lines)
+    if row < size and col < size:
+        out[row, col] = a[0, col] + b[row, 0]
 
 
-# ANCHOR_END: broadcast_add_layout_tensor
-def main():
+fn main() raises:
     with DeviceContext() as ctx:
         out_buf = ctx.enqueue_create_buffer[dtype](SIZE * SIZE).enqueue_fill(0)
         out_tensor = LayoutTensor[mut=True, dtype, out_layout](
