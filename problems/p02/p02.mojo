@@ -16,13 +16,10 @@ fn add(
     b: UnsafePointer[Scalar[dtype]],
 ):
     i = thread_idx.x
-    # FILL ME IN (roughly 1 line)
+    out[i] = a[i] + b[i]
 
 
-# ANCHOR_END: add
-
-
-def main():
+fn main() raises:
     with DeviceContext() as ctx:
         out = ctx.enqueue_create_buffer[dtype](SIZE).enqueue_fill(0)
         a = ctx.enqueue_create_buffer[dtype](SIZE).enqueue_fill(0)
