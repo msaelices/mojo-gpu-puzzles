@@ -22,26 +22,22 @@ fn add_10_blocks_2d[
 ):
     row = block_dim.y * block_idx.y + thread_idx.y
     col = block_dim.x * block_idx.x + thread_idx.x
-    # FILL ME IN (roughly 2 lines)
+    if row < size and col < size:
+        out[row, col] = a[row, col] + 10
 
 
-# ANCHOR_END: add_10_blocks_2d_layout_tensor
-
-
-def main():
+fn main() raises:
     with DeviceContext() as ctx:
         out_buf = ctx.enqueue_create_buffer[dtype](SIZE * SIZE).enqueue_fill(0)
         out_tensor = LayoutTensor[dtype, out_layout, MutableAnyOrigin](
             out_buf.unsafe_ptr()
         )
-
         expected_buf = ctx.enqueue_create_host_buffer[dtype](
             SIZE * SIZE
         ).enqueue_fill(1)
-
-        a = ctx.enqueue_create_buffer[dtype](SIZE * SIZE).enqueue_fill(1)
-        a_tensor = LayoutTensor[dtype, a_layout, MutableAnyOrigin](
-            a.unsafe_ptr()
+        a_buf = ctx.enqueue_create_buffer[dtype](SIZE * SIZE).enqueue_fill(1)
+        a_tensor = LayoutTensor[dtype, a_layout](
+            a_buf.unsafe_ptr()
         )
 
         ctx.enqueue_function[add_10_blocks_2d[out_layout, a_layout]](
