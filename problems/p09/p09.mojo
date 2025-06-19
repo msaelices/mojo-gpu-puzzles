@@ -25,8 +25,17 @@ fn pooling(
     ]()
     global_i = block_dim.x * block_idx.x + thread_idx.x
     local_i = thread_idx.x
-    # FILL ME IN (roughly 10 lines)
 
+    # FILL ME IN (roughly 10 lines)
+    shared[local_i] = a[global_i]
+    barrier()
+
+    if global_i == 0:
+        output[0] = shared[0]
+    elif global_i == 1:
+        output[1] = shared[0] + shared[1]
+    elif global_i < size:
+        output[global_i] = shared[local_i] + shared[local_i - 1] + shared[local_i - 2]
 
 # ANCHOR_END: pooling
 
@@ -52,6 +61,7 @@ def main():
         ctx.synchronize()
 
         with a.map_to_host() as a_host:
+            print("a: ", a_host)
             ptr = a_host.unsafe_ptr()
             for i in range(SIZE):
                 s = Scalar[dtype](0)
