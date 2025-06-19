@@ -33,32 +33,36 @@ fn add_10_shared_layout_tensor[
     barrier()
 
     # FILL ME IN (roughly 2 lines)
+    if global_i < size:
+        output[global_i] = shared[local_i] + 10
 
 
 # ANCHOR_END: add_10_shared_layout_tensor
 
 
-def main():
+fn main() raises:
     with DeviceContext() as ctx:
-        out = ctx.enqueue_create_buffer[dtype](SIZE).enqueue_fill(0)
         a = ctx.enqueue_create_buffer[dtype](SIZE).enqueue_fill(1)
+        output = ctx.enqueue_create_buffer[dtype](SIZE).enqueue_fill(0)
 
-        out_tensor = LayoutTensor[dtype, layout](out.unsafe_ptr())
+        out_tensor = LayoutTensor[dtype, layout](output.unsafe_ptr())
         a_tensor = LayoutTensor[dtype, layout](a.unsafe_ptr())
 
         ctx.enqueue_function[add_10_shared_layout_tensor[layout]](
-            out_tensor,
-            a_tensor,
+            out_tensor, 
+            a_tensor, 
             SIZE,
             grid_dim=BLOCKS_PER_GRID,
             block_dim=THREADS_PER_BLOCK,
         )
 
         expected = ctx.enqueue_create_host_buffer[dtype](SIZE).enqueue_fill(11)
+
         ctx.synchronize()
 
-        with out.map_to_host() as out_host:
-            print("out:", out_host)
-            print("expected:", expected)
+        with output.map_to_host() as out_host:
+            print("out: ", out_host)
+            print("expected: ", expected)
+
             for i in range(SIZE):
                 assert_equal(out_host[i], expected[i])
