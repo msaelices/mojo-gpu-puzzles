@@ -19,7 +19,7 @@ alias layout = Layout.row_major(SIZE, SIZE)
 fn naive_matmul[
     layout: Layout, size: Int
 ](
-    out: LayoutTensor[mut=False, dtype, layout],
+    output: LayoutTensor[mut=False, dtype, layout],
     a: LayoutTensor[mut=False, dtype, layout],
     b: LayoutTensor[mut=False, dtype, layout],
 ):
@@ -35,7 +35,7 @@ fn naive_matmul[
 fn single_block_matmul[
     layout: Layout, size: Int
 ](
-    out: LayoutTensor[mut=False, dtype, layout],
+    output: LayoutTensor[mut=False, dtype, layout],
     a: LayoutTensor[mut=False, dtype, layout],
     b: LayoutTensor[mut=False, dtype, layout],
 ):
@@ -49,7 +49,7 @@ fn single_block_matmul[
 # ANCHOR_END: single_block_matmul
 
 # ANCHOR: matmul_tiled
-alias SIZE_TILED = 8
+alias SIZE_TILED = 9
 alias BLOCKS_PER_GRID_TILED = (3, 3)  # each block convers 3x3 elements
 alias THREADS_PER_BLOCK_TILED = (TPB, TPB)
 alias layout_tiled = Layout.row_major(SIZE_TILED, SIZE_TILED)
@@ -58,14 +58,14 @@ alias layout_tiled = Layout.row_major(SIZE_TILED, SIZE_TILED)
 fn matmul_tiled[
     layout: Layout, size: Int
 ](
-    out: LayoutTensor[mut=False, dtype, layout],
+    output: LayoutTensor[mut=False, dtype, layout],
     a: LayoutTensor[mut=False, dtype, layout],
     b: LayoutTensor[mut=False, dtype, layout],
 ):
-    local_row = thread_idx.x
-    local_col = thread_idx.y
-    global_row = block_idx.x * TPB + local_row
-    global_col = block_idx.y * TPB + local_col
+    local_row = thread_idx.y
+    local_col = thread_idx.x
+    global_row = block_idx.y * TPB + local_row
+    global_col = block_idx.x * TPB + local_col
     # FILL ME IN (roughly 20 lines)
 
 

@@ -18,7 +18,7 @@ fn broadcast_add[
     a_layout: Layout,
     b_layout: Layout,
 ](
-    out: LayoutTensor[mut=True, dtype, out_layout],
+    output: LayoutTensor[mut=True, dtype, out_layout],
     a: LayoutTensor[mut=False, dtype, a_layout],
     b: LayoutTensor[mut=False, dtype, b_layout],
     size: Int,
@@ -53,7 +53,7 @@ fn main() raises:
 
             for i in range(SIZE):
                 for j in range(SIZE):
-                    expected_tensor[i, j] = a_host[i] + b_host[j]
+                    expected_tensor[i, j] = a_host[j] + b_host[i]
 
         a_tensor = LayoutTensor[dtype, a_layout](a.unsafe_ptr())
         b_tensor = LayoutTensor[dtype, b_layout](b.unsafe_ptr())
